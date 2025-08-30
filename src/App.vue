@@ -26,8 +26,11 @@
     <select v-model="targetArmor">
       <option v-for="value in [0, 1, 2, 3, 4, 5]" :key="value" :value="value">{{ value }}</option>
     </select>
-    护甲Hp
-    <input v-model="armorHp"></input>
+    <div v-if="targetArmor != 0">
+      护甲Hp
+      <input v-model="armorHp"></input>
+    </div>
+
   </div>
   <div>
     <p>ttk折线统计图</p>
@@ -42,6 +45,7 @@ import { defineWeaponStore } from './stores/weapon';
 import { storeToRefs } from 'pinia';
 import type { WeaponSetting } from './stores/weapon';
 import { v4 as uuidv4 } from 'uuid';
+import { calcArmorRatio, calcBulletsToKills, damageReduction } from './utils/ttk';
 
 const weaponStore = defineWeaponStore()
 const { weaponList } = storeToRefs(weaponStore)
@@ -68,9 +72,13 @@ const addWeapon = () => {
 }
 
 const ttkCalc = (s: WeaponSetting, dis: number) => {
-  // ttk = (60 / RPM) * (ShotsToKill - 1) * 1000
-  // ShotsToKill = TargetHp / (BaseDmg * HitboxRatio * RangeMultiplier * ArmorReduction)
-
+  // ttk = (60 / RPM) * (ShotsToKill - 1) * 1000 ms
+  const armorRatio = calcArmorRatio(s.bulletLevel, targetArmor.value)
+  if (targetArmor.value == 0) {
+    armorHp.value = 0
+  }
+  const shotsToKill = calcBulletsToKills(s.weapon.damage, s.weapon.armorDamage, armorHp.value, armorRatio, damageReduction[s.bulletLevel][targetArmor.value], 100)
+  return (60 / s.weapon.fireSpeed) * (shotsToKill - 1) * 1000
 }
 
 </script>
