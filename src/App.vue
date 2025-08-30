@@ -30,7 +30,6 @@
       护甲Hp
       <input v-model="armorHp"></input>
     </div>
-
   </div>
   <div>
     <p>ttk折线统计图</p>
@@ -45,7 +44,7 @@ import { defineWeaponStore } from './stores/weapon';
 import { storeToRefs } from 'pinia';
 import type { WeaponSetting } from './stores/weapon';
 import { v4 as uuidv4 } from 'uuid';
-import { calcArmorRatio, calcBulletsToKills, damageReduction } from './utils/ttk';
+import { calcArmorRatio, calcBulletsToKills, damageReduction, distanceDecay } from './utils/ttk';
 
 const weaponStore = defineWeaponStore()
 const { weaponList } = storeToRefs(weaponStore)
@@ -77,7 +76,8 @@ const ttkCalc = (s: WeaponSetting, dis: number) => {
   if (targetArmor.value == 0) {
     armorHp.value = 0
   }
-  const shotsToKill = calcBulletsToKills(s.weapon.damage, s.weapon.armorDamage, armorHp.value, armorRatio, damageReduction[s.bulletLevel][targetArmor.value], 100)
+  const [dmg, armorDmg] = distanceDecay(s.weapon.damage, s.weapon.armorDamage, dis, s.weapon.decays, s.weapon.ranges)
+  const shotsToKill = calcBulletsToKills(dmg, armorDmg, armorHp.value, armorRatio, damageReduction[s.bulletLevel][targetArmor.value], 100)
   return (60 / s.weapon.fireSpeed) * (shotsToKill - 1) * 1000
 }
 

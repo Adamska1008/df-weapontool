@@ -27,7 +27,7 @@ export const defineWeaponStore = defineStore("weapon", () => {
             fireSpeed: 706,
             damage: 35,
             armorDamage: 38,
-            ranges: [35, 62],
+            ranges: [35, 62, 0x7f7f7f7f],
             decays: [1, 0.9, 0.7]
         },
         {
@@ -36,7 +36,7 @@ export const defineWeaponStore = defineStore("weapon", () => {
             fireSpeed: 600,
             damage: 40,
             armorDamage: 42,
-            ranges: [40, 70],
+            ranges: [40, 70, 0x7f7f7f7f],
             decays: [1, 0.85, 0.7]
         }
     ])

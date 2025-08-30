@@ -33,6 +33,20 @@ export function calcArmorRatio(bullets: number, armor: number): number {
  * 
  * @param dmg 
  * @param armorDmg 
+ * @param distance 
+ */
+export function distanceDecay(dmg: number, armorDmg: number, distance: number, decays: number[], ranges: number[]): [number, number] {
+    var index = 0
+    while (distance > ranges[index]) {
+        index += 1
+    }
+    return [dmg * decays[index], armorDmg * decays[index]]
+}
+
+/**
+ * 
+ * @param dmg 
+ * @param armorDmg 
  * @param armorHp 
  * @param armorRatio actualArmorDmg = armorDmg * armorRatio. For example, 5 -> 6 is 110% 
  * @param dmgReduction the damage reduction from the armor on the body. For example, 4 -> 4 is 50% (same level bullets and armor)
