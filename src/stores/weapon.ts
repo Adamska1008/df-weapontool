@@ -13,6 +13,11 @@ export interface Weapon {
     decays: number[], // Its length is always one larger than ranges
 }
 
+export interface WeaponSetting {
+    id: string,
+    weapon: Weapon,
+    bulletLevel: number
+}
 
 export const defineWeaponStore = defineStore("weapon", () => {
     const weaponList = ref<Weapon[]>([
