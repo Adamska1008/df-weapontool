@@ -1,6 +1,6 @@
 
 // damageReduction[i][j] means damage from level-i bullets to level-j armor
-export const damageReduction: number[][] = [
+export const armorRatio: number[][] = [
     [],
     [0, 0.6, 0.6, 0.4, 0.3, 0.2, 0.2],
     [0, 0.7, 0.7, 0.7, 0.5, 0.4, 0.3],
@@ -17,7 +17,7 @@ export const damageReduction: number[][] = [
  * @param bullets bullets level
  * @param armor armor level
  */
-export function calcArmorRatio(bullets: number, armor: number): number {
+export function calcDmgReduction(bullets: number, armor: number): number {
     if (bullets > armor + 1) {
         return 0
     } else if (bullets == armor + 1) {
