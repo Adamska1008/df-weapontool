@@ -18,6 +18,7 @@
           子弹等级 {{ level }}
         </option>
       </select>
+      <button @click="() => removeWeapon(setting.id)">删除</button>
     </div>
   </div>
   <div>
@@ -69,6 +70,10 @@ const addWeapon = () => {
     return
   }
   selectedWeapons.value.push(setting)
+}
+
+const removeWeapon = (id: string) => {
+  selectedWeapons.value = selectedWeapons.value.filter((weapon) => weapon.id !== id)
 }
 
 const ttkCalc = (s: WeaponSetting, dis: number) => {
