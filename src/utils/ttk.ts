@@ -58,7 +58,7 @@ export function calcBulletsToKills(dmg: number, armorDmg: number, armorHp: numbe
         return 0
     }
     if (armorHp == 0) { // rounding up
-        return (hp + dmg - 1) / dmg
+        return Math.ceil(hp / dmg)
     }
     if (armorHp < armorDmg) { // kind of complex
         const bodyHpLoss = (armorHp / (armorDmg * armorRatio)) * (1 - dmgReduction) * dmg + (1 - armorHp / (armorDmg * armorRatio)) * dmg
@@ -67,11 +67,11 @@ export function calcBulletsToKills(dmg: number, armorDmg: number, armorHp: numbe
     // if (armorHp >= armorDmg) {
     const armorHpLossPer = armorDmg * armorRatio
     const hpLossPer = (1 - dmgReduction) * dmg
-    const armorHits = armorHp / armorHpLossPer
-    const bodyHits = hp / hpLossPer
+    const armorHits = Math.floor(armorHp / armorHpLossPer)
+    const bodyHits = Math.floor(hp / hpLossPer)
     if (bodyHits <= armorHits) {
-        return (hp + hpLossPer - 1) / hpLossPer
+        return Math.ceil(hp / hpLossPer)
     }
-    return calcBulletsToKills(dmg, armorDmg, armorHp - armorHits * armorHpLossPer, armorRatio, dmgReduction, hp - bodyHits * hpLossPer) + armorHits
+    return calcBulletsToKills(dmg, armorDmg, armorHp - armorHits * armorHpLossPer, armorRatio, dmgReduction, hp - armorHits * hpLossPer) + armorHits
     // }
 }
