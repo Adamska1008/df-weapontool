@@ -104,6 +104,12 @@ TTK = (60 / RPM) * (ShotsToKill - 1) * 1000 ms
 
 欢迎提交 Issue 和 Pull Request 来改进这个工具。
 
+## Roadmap
+
+- 允许切换展示 BTK（击杀枪数）和 TTK（击杀时间）
+- 添加更多武器
+- 添加修脚ttk
+
 ## 许可证
 
 [MIT](LICENSE)
