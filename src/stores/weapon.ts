@@ -11,12 +11,16 @@ export interface Weapon {
     armorDamage: number,
     ranges: number[], // The actual damage under ranges[i] should be multiplied by decays[i]
     decays: number[], // Its length is always one larger than ranges
+    availableAccessories: number[]
 }
 
 export interface WeaponSetting {
     id: string,
     weapon: Weapon,
-    bulletLevel: number
+    bulletLevel: number,
+    barrel: number | null,
+    gasComp: number | null,
+    muzzle: number | null,
 }
 
 export const defineWeaponStore = defineStore("weapon", () => {
@@ -28,7 +32,8 @@ export const defineWeaponStore = defineStore("weapon", () => {
             damage: 35,
             armorDamage: 38,
             ranges: [35, 62, 0x7f7f7f7f],
-            decays: [1, 0.9, 0.7]
+            decays: [1, 0.9, 0.7],
+            availableAccessories: [1, 2, 3, 4, 5, 6]
         },
         {
             id: "2", name: "AKM突击步枪", type: "gunRifle",
@@ -37,7 +42,8 @@ export const defineWeaponStore = defineStore("weapon", () => {
             damage: 40,
             armorDamage: 42,
             ranges: [40, 70, 0x7f7f7f7f],
-            decays: [1, 0.85, 0.7]
+            decays: [1, 0.85, 0.7],
+            availableAccessories: [4, 5, 6, 7, 8, 9, 10]
         }
     ])
 

@@ -37,7 +37,7 @@ export function calcDmgReduction(bullets: number, armor: number): number {
  */
 export function distanceDecay(dmg: number, armorDmg: number, distance: number, decays: number[], ranges: number[]): [number, number] {
     var index = 0
-    while (distance > ranges[index]) {
+    while (index < ranges.length - 1 && distance > ranges[index]) {
         index += 1
     }
     return [dmg * decays[index], armorDmg * decays[index]]

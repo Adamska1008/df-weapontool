@@ -18,6 +18,30 @@
           子弹等级 {{ level }}
         </option>
       </select>
+      <select v-model="setting.barrel">
+        <option :value="null">无枪管</option>
+        <option
+          v-for="acc in setting.weapon.availableAccessories.filter(id => accessoryStore.findAccessoryById(id)?.type == 'barrel')"
+          :key="acc" :value="acc">
+          {{ accessoryStore.findAccessoryById(acc)?.name }}
+        </option>
+      </select>
+      <select v-model="setting.gasComp">
+        <option :value="null">无枪口</option>
+        <option
+          v-for="acc in setting.weapon.availableAccessories.filter(id => accessoryStore.findAccessoryById(id)?.type == 'muzzle')"
+          :key="acc" :value="acc">
+          {{ accessoryStore.findAccessoryById(acc)?.name }}
+        </option>
+      </select>
+      <select v-model="setting.muzzle">
+        <option :value="null">无导气</option>
+        <option
+          v-for="acc in setting.weapon.availableAccessories.filter(id => accessoryStore.findAccessoryById(id)?.type == 'gasComp')"
+          :key="acc" :value="acc">
+          {{ accessoryStore.findAccessoryById(acc)?.name }}
+        </option>
+      </select>
       <button @click="() => removeWeapon(setting.id)">删除</button>
     </div>
   </div>
@@ -45,10 +69,13 @@ import { ref, computed } from 'vue';
 import { defineWeaponStore } from './stores/weapon';
 import { storeToRefs } from 'pinia';
 import type { WeaponSetting } from './stores/weapon';
+import { defineAccessoryStore } from './stores/accessory';
+import type { Accessory } from './stores/accessory';
 import { v4 as uuidv4 } from 'uuid';
 import { calcDmgReduction, calcBulletsToKills, armorRatio, distanceDecay } from './utils/ttk';
 
 const weaponStore = defineWeaponStore()
+const accessoryStore = defineAccessoryStore()
 const { weaponList } = storeToRefs(weaponStore)
 
 const selectedWeapon = ref("1")
@@ -58,22 +85,51 @@ const selectedWeapons = ref<WeaponSetting[]>([])
 const targetArmor = ref(0)
 const armorHp = ref(0)
 
+const settingName = (w: WeaponSetting) => {
+  return `${w.weapon.name} (Lv.${w.bulletLevel}) ${w.barrel != null ? accessoryStore.findAccessoryById(w.barrel)?.name : ''} ${w.gasComp != null ? accessoryStore.findAccessoryById(w.gasComp)?.name : ''} ${w.muzzle != null ? accessoryStore.findAccessoryById(w.muzzle)?.name : ''}`
+}
+
 const addWeapon = () => {
   console.log(selectedWeapon.value)
   const weapon = weaponStore.findWeaponById(selectedWeapon.value)
   if (weapon == undefined) {
     return // should not execute 
   }
-  const setting: WeaponSetting = { id: uuidv4(), weapon: weapon, bulletLevel: 1 }
+  const setting: WeaponSetting = { id: uuidv4(), weapon: weapon, bulletLevel: 1, barrel: null, gasComp: null, muzzle: null }
 
-  if (selectedWeapons.value.find((w) => w.weapon.id == weapon.id) != undefined) {
-    return
-  }
   selectedWeapons.value.push(setting)
 }
 
 const removeWeapon = (id: string) => {
   selectedWeapons.value = selectedWeapons.value.filter((weapon) => weapon.id !== id)
+}
+
+const accessoryEffect = (setting: WeaponSetting) => {
+  let finalDmg = setting.weapon.damage
+  let finalArmorDmg = setting.weapon.armorDamage
+  let finalRanges = [...setting.weapon.ranges]
+  let finalFireSpeed = setting.weapon.fireSpeed
+  const applyAccessory = (acc: Accessory | undefined) => {
+    if (acc != undefined) {
+      finalDmg += acc.damage
+      finalArmorDmg += acc.armorDamage
+      finalRanges = finalRanges.map((r) => r + (acc.distance))
+      finalFireSpeed += acc.fireSpeed
+    }
+  }
+  if (setting.barrel != null) {
+    const acc = accessoryStore.findAccessoryById(setting.barrel)
+    applyAccessory(acc)
+  }
+  if (setting.gasComp != null) {
+    const acc = accessoryStore.findAccessoryById(setting.gasComp)
+    applyAccessory(acc)
+  }
+  if (setting.muzzle != null) {
+    const acc = accessoryStore.findAccessoryById(setting.muzzle)
+    applyAccessory(acc)
+  }
+  return [finalDmg, finalArmorDmg, finalRanges, finalFireSpeed] as const
 }
 
 const ttkCalc = (s: WeaponSetting, dis: number) => {
@@ -82,14 +138,15 @@ const ttkCalc = (s: WeaponSetting, dis: number) => {
   if (targetArmor.value == 0) {
     armorHp.value = 0
   }
-  const [dmg, armorDmg] = distanceDecay(s.weapon.damage, s.weapon.armorDamage, dis, s.weapon.decays, s.weapon.ranges)
-  const shotsToKill = calcBulletsToKills(dmg, armorDmg, armorHp.value, armorRatio[s.bulletLevel][targetArmor.value], dmgReduction, 100)
-  return (60 / s.weapon.fireSpeed) * (shotsToKill - 1) * 1000
+  const [dmg, armorDmg, ranges, fireSpeed] = accessoryEffect(s)
+  const [decayedDmg, decayedArmorDmg] = distanceDecay(dmg, armorDmg, dis, s.weapon.decays, ranges)
+  const shotsToKill = calcBulletsToKills(decayedDmg, decayedArmorDmg, armorHp.value, armorRatio[s.bulletLevel][targetArmor.value], dmgReduction, 100)
+  return (60 / fireSpeed) * (shotsToKill - 1) * 1000
 }
 
 const option = computed(() => ({
   legend: {
-    data: selectedWeapons.value.map((s) => s.weapon.name),
+    data: selectedWeapons.value.map((s) => settingName(s)),
     show: true
   },
   tooltip: {
@@ -110,7 +167,7 @@ const option = computed(() => ({
     type: 'value'
   },
   series: selectedWeapons.value.map((s) => ({
-    name: s.weapon.name,
+    name: settingName(s),
     type: 'line',
     data: Array.from({ length: 100 }, (_, i) => ttkCalc(s, i)),
     emphasis: {
