@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <h1 class="title">TTK工具</h1>
-    
+
     <div class="section">
       <div class="weapon-selection">
         <p>添加武器</p>
@@ -11,7 +11,7 @@
         <button @click="addWeapon">添加</button>
       </div>
     </div>
-    
+
     <div class="section">
       <h2 class="section-title">武器信息与配置</h2>
       <div class="weapon-configurations">
@@ -29,7 +29,7 @@
                 </option>
               </select>
             </div>
-            
+
             <div class="accessory-select">
               <label>枪管</label>
               <select v-model="setting.barrel">
@@ -41,7 +41,7 @@
                 </option>
               </select>
             </div>
-            
+
             <div class="accessory-select">
               <label>枪口</label>
               <select v-model="setting.gasComp">
@@ -53,7 +53,7 @@
                 </option>
               </select>
             </div>
-            
+
             <div class="accessory-select">
               <label>导气</label>
               <select v-model="setting.muzzle">
@@ -69,7 +69,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="section target-config">
       <h2 class="section-title">靶子配置</h2>
       <div class="target-config-row">
@@ -83,7 +83,7 @@
         <input v-model="armorHp" type="number" />
       </div>
     </div>
-    
+
     <div v-if="selectedWeapons.length > 0" class="section chart-container">
       <h2 class="chart-title">TTK折线统计图</h2>
       <v-chart autoresize :option="option" style="height: 400px"> </v-chart>
@@ -141,7 +141,7 @@ const accessoryEffect = (setting: WeaponSetting) => {
     if (acc != undefined) {
       finalDmg += acc.damage
       finalArmorDmg += acc.armorDamage
-      finalRanges = finalRanges.map((r) => r + (acc.distance))
+      finalRanges = finalRanges.map((r) => Math.round(r * (1 + acc.distance))) // TODO: not sure if it's round or ceil or floor
       finalFireSpeed += acc.fireSpeed
     }
   }
@@ -221,7 +221,7 @@ const option = computed(() => ({
   color: #2c3e50;
   margin-bottom: 30px;
   font-size: 2.5rem;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .section {
@@ -229,7 +229,7 @@ const option = computed(() => ({
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 25px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .section-title {
@@ -288,7 +288,7 @@ const option = computed(() => ({
   border-radius: 6px;
   padding: 15px;
   border-left: 4px solid #3498db;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .weapon-card-header {
@@ -311,19 +311,22 @@ const option = computed(() => ({
   gap: 15px;
 }
 
-.accessory-select, .bullet-level-select {
+.accessory-select,
+.bullet-level-select {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
-.accessory-select label, .bullet-level-select label {
+.accessory-select label,
+.bullet-level-select label {
   font-size: 0.9rem;
   color: #7f8c8d;
   font-weight: 500;
 }
 
-.accessory-select select, .bullet-level-select select {
+.accessory-select select,
+.bullet-level-select select {
   padding: 6px 10px;
   border: 1px solid #bdc3c7;
   border-radius: 4px;
@@ -366,7 +369,8 @@ const option = computed(() => ({
   min-width: 80px;
 }
 
-.target-config select, .target-config input {
+.target-config select,
+.target-config input {
   padding: 8px 12px;
   border: 1px solid #bdc3c7;
   border-radius: 4px;
@@ -391,20 +395,20 @@ const option = computed(() => ({
   .app-container {
     padding: 10px;
   }
-  
+
   .section {
     padding: 15px;
   }
-  
+
   .weapon-card-content {
     grid-template-columns: 1fr;
   }
-  
+
   .weapon-selection {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .target-config-row {
     flex-direction: column;
     align-items: flex-start;
