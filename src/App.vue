@@ -1,66 +1,94 @@
 <template>
-  <h1>ttk工具</h1>
-  <div>
-    <p>
-      添加武器
-    </p>
-    <select v-model="selectedWeapon">
-      <option v-for="weapon in weaponList" :key="weapon.id" :value="weapon.id">{{ weapon.name }}</option>
-    </select>
-    <button @click="addWeapon">添加</button>
-  </div>
-  <div>
-    <p>武器信息与配置</p>
-    <div v-for="setting in selectedWeapons" :key="setting.id">
-      <p>{{ setting.weapon.name }}</p>
-      <select v-model="setting.bulletLevel">
-        <option v-for="level in [1, 2, 3, 4, 5]" :key="level" :value="level">
-          子弹等级 {{ level }}
-        </option>
-      </select>
-      <select v-model="setting.barrel">
-        <option :value="null">无枪管</option>
-        <option
-          v-for="acc in setting.weapon.availableAccessories.filter(id => accessoryStore.findAccessoryById(id)?.type == 'barrel')"
-          :key="acc" :value="acc">
-          {{ accessoryStore.findAccessoryById(acc)?.name }}
-        </option>
-      </select>
-      <select v-model="setting.gasComp">
-        <option :value="null">无枪口</option>
-        <option
-          v-for="acc in setting.weapon.availableAccessories.filter(id => accessoryStore.findAccessoryById(id)?.type == 'muzzle')"
-          :key="acc" :value="acc">
-          {{ accessoryStore.findAccessoryById(acc)?.name }}
-        </option>
-      </select>
-      <select v-model="setting.muzzle">
-        <option :value="null">无导气</option>
-        <option
-          v-for="acc in setting.weapon.availableAccessories.filter(id => accessoryStore.findAccessoryById(id)?.type == 'gasComp')"
-          :key="acc" :value="acc">
-          {{ accessoryStore.findAccessoryById(acc)?.name }}
-        </option>
-      </select>
-      <button @click="() => removeWeapon(setting.id)">删除</button>
+  <div class="app-container">
+    <h1 class="title">TTK工具</h1>
+    
+    <div class="section">
+      <div class="weapon-selection">
+        <p>添加武器</p>
+        <select v-model="selectedWeapon">
+          <option v-for="weapon in weaponList" :key="weapon.id" :value="weapon.id">{{ weapon.name }}</option>
+        </select>
+        <button @click="addWeapon">添加</button>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2 class="section-title">武器信息与配置</h2>
+      <div class="weapon-configurations">
+        <div v-for="setting in selectedWeapons" :key="setting.id" class="weapon-card">
+          <div class="weapon-card-header">
+            <h3 class="weapon-name">{{ setting.weapon.name }}</h3>
+            <button @click="() => removeWeapon(setting.id)" class="remove-button">删除</button>
+          </div>
+          <div class="weapon-card-content">
+            <div class="bullet-level-select">
+              <label>子弹等级</label>
+              <select v-model="setting.bulletLevel">
+                <option v-for="level in [1, 2, 3, 4, 5]" :key="level" :value="level">
+                  等级 {{ level }}
+                </option>
+              </select>
+            </div>
+            
+            <div class="accessory-select">
+              <label>枪管</label>
+              <select v-model="setting.barrel">
+                <option :value="null">无枪管</option>
+                <option
+                  v-for="acc in setting.weapon.availableAccessories.filter(id => accessoryStore.findAccessoryById(id)?.type == 'barrel')"
+                  :key="acc" :value="acc">
+                  {{ accessoryStore.findAccessoryById(acc)?.name }}
+                </option>
+              </select>
+            </div>
+            
+            <div class="accessory-select">
+              <label>枪口</label>
+              <select v-model="setting.gasComp">
+                <option :value="null">无枪口</option>
+                <option
+                  v-for="acc in setting.weapon.availableAccessories.filter(id => accessoryStore.findAccessoryById(id)?.type == 'muzzle')"
+                  :key="acc" :value="acc">
+                  {{ accessoryStore.findAccessoryById(acc)?.name }}
+                </option>
+              </select>
+            </div>
+            
+            <div class="accessory-select">
+              <label>导气</label>
+              <select v-model="setting.muzzle">
+                <option :value="null">无导气</option>
+                <option
+                  v-for="acc in setting.weapon.availableAccessories.filter(id => accessoryStore.findAccessoryById(id)?.type == 'gasComp')"
+                  :key="acc" :value="acc">
+                  {{ accessoryStore.findAccessoryById(acc)?.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section target-config">
+      <h2 class="section-title">靶子配置</h2>
+      <div class="target-config-row">
+        <label>护甲等级</label>
+        <select v-model="targetArmor">
+          <option v-for="value in [0, 1, 2, 3, 4, 5, 6]" :key="value" :value="value">{{ value }}</option>
+        </select>
+      </div>
+      <div v-if="targetArmor != 0" class="target-config-row">
+        <label>护甲HP</label>
+        <input v-model="armorHp" type="number" />
+      </div>
+    </div>
+    
+    <div v-if="selectedWeapons.length > 0" class="section chart-container">
+      <h2 class="chart-title">TTK折线统计图</h2>
+      <v-chart autoresize :option="option" style="height: 400px"> </v-chart>
     </div>
   </div>
-  <div>
-    <p>靶子配置</p>
-    护甲等级
-    <select v-model="targetArmor">
-      <option v-for="value in [0, 1, 2, 3, 4, 5, 6]" :key="value" :value="value">{{ value }}</option>
-    </select>
-    <div v-if="targetArmor != 0">
-      护甲Hp
-      <input v-model="armorHp"></input>
-    </div>
-  </div>
-  <div v-if="selectedWeapons.length > 0">
-    <p>ttk折线统计图</p>
-    <v-chart autoresize :option="option" style="height: 400px"> </v-chart>
-  </div>
-
 </template>
 
 
@@ -177,3 +205,209 @@ const option = computed(() => ({
 }))
 
 </script>
+
+<style scoped>
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.title {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 30px;
+  font-size: 2.5rem;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.section {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  color: #34495e;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #3498db;
+}
+
+.weapon-selection {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.weapon-selection p {
+  margin: 0;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.weapon-selection select {
+  padding: 8px 12px;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 1rem;
+  min-width: 200px;
+}
+
+.weapon-selection button {
+  padding: 8px 16px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+.weapon-selection button:hover {
+  background-color: #2980b9;
+}
+
+.weapon-configurations {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.weapon-card {
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 15px;
+  border-left: 4px solid #3498db;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.weapon-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.weapon-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.weapon-card-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.accessory-select, .bullet-level-select {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.accessory-select label, .bullet-level-select label {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.accessory-select select, .bullet-level-select select {
+  padding: 6px 10px;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 0.95rem;
+}
+
+.remove-button {
+  padding: 6px 12px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s;
+  align-self: flex-end;
+}
+
+.remove-button:hover {
+  background-color: #c0392b;
+}
+
+.target-config {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.target-config-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.target-config label {
+  font-weight: bold;
+  color: #2c3e50;
+  min-width: 80px;
+}
+
+.target-config select, .target-config input {
+  padding: 8px 12px;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 1rem;
+  min-width: 150px;
+}
+
+.chart-container {
+  margin-top: 20px;
+}
+
+.chart-title {
+  font-size: 1.5rem;
+  color: #34495e;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 10px;
+  }
+  
+  .section {
+    padding: 15px;
+  }
+  
+  .weapon-card-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .weapon-selection {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .target-config-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+</style>
