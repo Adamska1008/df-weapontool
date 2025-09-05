@@ -81,7 +81,7 @@ export const defineWeaponStore = defineStore("weapon", () => {
             fireSpeed: 700,
             damage: 36,
             armorDamage: 35,
-            ranges: [20, 27, 40, 55],
+            ranges: [20, 27, 40, 55, 0x7f7f7f7f],
             decays: [1, 0.75, 0.65, 0.55, 0.45],
             availableAccessories: [4, 5, 6, 19, 20]
         },
@@ -92,8 +92,38 @@ export const defineWeaponStore = defineStore("weapon", () => {
             damage: 35,
             armorDamage: 40,
             ranges: [27, 54, 90],
-            decays: [1, 0.75, 0.65, 0.55],
+            decays: [1, 0.75, 0.65, 0.55, 0x7f7f7f7f],
             availableAccessories: [4, 5, 6, 20, 21, 22, 23]
+        },
+        {
+            id: "8", name: "UZI冲锋枪", type: "submachineGun",
+            velocity: 450,
+            fireSpeed: 780,
+            damage: 28,
+            armorDamage: 35,
+            ranges: [20, 27, 40, 55, 0x7f7f7f7f],
+            decays: [1, 0.75, 0.65, 0.55, 0.45],
+            availableAccessories: [4, 5, 6, 20, 24, 25]
+        },
+        {
+            id: "9", name: "QBZ95-1突击步枪", type: "gunRifle",
+            velocity: 575,
+            fireSpeed: 679,
+            damage: 28,
+            armorDamage: 42,
+            ranges: [55, 90, 0x7f7f7f7f],
+            decays: [1, 0.75, 0.65, 0.55, 0.45],
+            availableAccessories: [4, 5, 6, 26, 27]
+        },
+        {
+            id: "10", name: "AK-12突击步枪", type: "gunRifle",
+            velocity: 575,
+            fireSpeed: 735,
+            damage: 29,
+            armorDamage: 42,
+            ranges: [40, 70, 0x7f7f7f7f],
+            decays: [1, 0.9, 0.75],
+            availableAccessories: [4, 5, 6, 7, 28]
         },
     ])
 
