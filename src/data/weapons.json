@@ -118,5 +118,29 @@
     "ranges": [40, 70, 2139062143],
     "decays": [1, 0.9, 0.75],
     "availableAccessories": [4, 5, 6, 7, 28]
+  },
+  {
+    "id": "11",
+    "name": "K437突击步枪",
+    "type": "gunRifle",
+    "velocity": 575,
+    "fireSpeed": 780,
+    "damage": 34,
+    "armorDamage": 35,
+    "ranges": [35, 60, 2139062143],
+    "decays": [1, 0.9, 0.7],
+    "availableAccessories": [4, 5, 6, 29, 30]
+  },
+  {
+    "id": "12",
+    "name": "M7突击步枪",
+    "type": "gunRifle",
+    "velocity": 575,
+    "fireSpeed": 649,
+    "damage": 38,
+    "armorDamage": 40,
+    "ranges": [50, 90, 2139062143],
+    "decays": [1, 0.9, 0.8],
+    "availableAccessories": [4, 5, 6, 31, 32]
   }
 ]
