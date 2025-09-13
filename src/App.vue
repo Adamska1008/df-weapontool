@@ -24,8 +24,11 @@
             <div class="bullet-level-select">
               <label>子弹等级</label>
               <select v-model="setting.bulletLevel">
-                <option v-for="level in [1, 2, 3, 4, 5]" :key="level" :value="level">
+                <option v-for="level in setting.weapon.bulletLevels" :key="level" :value="level">
                   等级 {{ level }}
+                </option>
+                <option v-if="setting.weapon.meatAmmoAllowed" value="meat">
+                  肉弹
                 </option>
               </select>
             </div>
@@ -162,13 +165,14 @@ const accessoryEffect = (setting: WeaponSetting) => {
 
 const ttkCalc = (s: WeaponSetting, dis: number) => {
   // ttk = (60 / RPM) * (ShotsToKill - 1) * 1000 ms
-  const dmgReduction = calcDmgReduction(s.bulletLevel, targetArmor.value)
+  const bulletLevel = s.bulletLevel === "meat" ? 3 : s.bulletLevel
+  const dmgReduction = calcDmgReduction(bulletLevel, targetArmor.value)
   if (targetArmor.value == 0) {
     armorHp.value = 0
   }
   const [dmg, armorDmg, ranges, fireSpeed] = accessoryEffect(s)
   const [decayedDmg, decayedArmorDmg] = distanceDecay(dmg, armorDmg, dis, s.weapon.decays, ranges)
-  const bullet = createBulletInstance("Normal", s.bulletLevel, s.weapon)
+  const bullet = createBulletInstance(s.bulletLevel === "meat" ? "MeatBullet" : "Normal", bulletLevel, s.weapon)
   const shotsToKill = calcBulletsToKills(decayedDmg * bullet.damageRatio, decayedArmorDmg, armorHp.value, bullet.armorDamageRatio[targetArmor.value], dmgReduction, 100)
   return (60 / fireSpeed) * (shotsToKill - 1) * 1000
 }

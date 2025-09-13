@@ -12,13 +12,15 @@ export interface Weapon {
     armorDamage: number,
     ranges: number[], // The actual damage under ranges[i] should be multiplied by decays[i]
     decays: number[], // Its length is always one larger than ranges
-    availableAccessories: number[]
+    availableAccessories: number[],
+    meatAmmoAllowed: boolean,
+    bulletLevels: number[]
 }
 
 export interface WeaponSetting {
     id: string,
     weapon: Weapon,
-    bulletLevel: number,
+    bulletLevel: number | "meat",
     barrel: number | null,
     gasComp: number | null,
     muzzle: number | null,
