@@ -1,6 +1,14 @@
+import type { Weapon } from "../stores/weapon"
+
+export type BulletType = 'Normal' | 'MeatBullet'
+
+export interface Bullet {
+    damageRatio: number,
+    armorDamageRatio: number[], // damageReduction[i] means damage reduction from level-i armor
+}
 
 // damageReduction[i][j] means damage from level-i bullets to level-j armor
-export const armorRatio: number[][] = [
+const armorRatio: number[][] = [
     [],
     [0, 0.6, 0.6, 0.4, 0.3, 0.2, 0.2],
     [0, 0.7, 0.7, 0.7, 0.5, 0.4, 0.3],
@@ -11,9 +19,33 @@ export const armorRatio: number[][] = [
     [0, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1], // For AWM
 ]
 
-
 /**
  * 
+ * @param type Bullet type
+ * @param level Bullet level
+ * @param weapon Weapon object (using this bullet)
+ * @returns Bullet instance
+ */
+export function createBulletInstance(type: BulletType, level: number, _weapon: Weapon): Bullet {
+    let b: Bullet = {
+        damageRatio: 0,
+        armorDamageRatio: []
+    }
+    if (type == 'Normal') {
+        if (level == 1 || level == 2)
+            b.damageRatio = 1.1
+        else
+            b.damageRatio = 1
+        b.armorDamageRatio = armorRatio[level]
+    } else { // Type == 'MeatBullet'
+        b.damageRatio = 1.4
+        b.armorDamageRatio = [0, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2]
+    }
+    return b
+}
+
+/**
+ * Calculate the damage reduction from armor
  * @param bullets bullets level
  * @param armor armor level
  */

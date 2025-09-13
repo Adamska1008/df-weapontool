@@ -35,7 +35,7 @@
               <select v-model="setting.barrel">
                 <option :value="null">无枪管</option>
                 <option
-                  v-for="acc in setting.weapon.availableAccessories.filter(id => accessoryStore.findAccessoryById(id)?.type == 'barrel')"
+                  v-for="acc in setting.weapon.availableAccessories.filter(id => accessoryStore.findAccessoryById(id)?.type === 'barrel')"
                   :key="acc" :value="acc">
                   {{ accessoryStore.findAccessoryById(acc)?.name }}
                 </option>
@@ -47,7 +47,7 @@
               <select v-model="setting.gasComp">
                 <option :value="null">无枪口</option>
                 <option
-                  v-for="acc in setting.weapon.availableAccessories.filter(id => accessoryStore.findAccessoryById(id)?.type == 'muzzle')"
+                  v-for="acc in setting.weapon.availableAccessories.filter(id => accessoryStore.findAccessoryById(id)?.type === 'muzzle')"
                   :key="acc" :value="acc">
                   {{ accessoryStore.findAccessoryById(acc)?.name }}
                 </option>
@@ -59,7 +59,7 @@
               <select v-model="setting.muzzle">
                 <option :value="null">无导气</option>
                 <option
-                  v-for="acc in setting.weapon.availableAccessories.filter(id => accessoryStore.findAccessoryById(id)?.type == 'gasComp')"
+                  v-for="acc in setting.weapon.availableAccessories.filter(id => accessoryStore.findAccessoryById(id)?.type === 'gasComp')"
                   :key="acc" :value="acc">
                   {{ accessoryStore.findAccessoryById(acc)?.name }}
                 </option>
@@ -78,9 +78,9 @@
           <option v-for="value in [0, 1, 2, 3, 4, 5, 6]" :key="value" :value="value">{{ value }}</option>
         </select>
       </div>
-      <div v-if="targetArmor != 0" class="target-config-row">
+      <div v-if="targetArmor !== 0" class="target-config-row">
         <label>护甲HP</label>
-        <input v-model="armorHp" type="number" />
+        <input v-model="armorHp" type="number" :min="0" />
       </div>
     </div>
 
@@ -100,7 +100,7 @@ import type { WeaponSetting } from './stores/weapon';
 import { defineAccessoryStore } from './stores/accessory';
 import type { Accessory } from './stores/accessory';
 import { v4 as uuidv4 } from 'uuid';
-import { calcDmgReduction, calcBulletsToKills, armorRatio, distanceDecay } from './utils/ttk';
+import { calcDmgReduction, calcBulletsToKills, distanceDecay, createBulletInstance } from './utils/ttk';
 
 const weaponStore = defineWeaponStore()
 const accessoryStore = defineAccessoryStore()
@@ -168,7 +168,8 @@ const ttkCalc = (s: WeaponSetting, dis: number) => {
   }
   const [dmg, armorDmg, ranges, fireSpeed] = accessoryEffect(s)
   const [decayedDmg, decayedArmorDmg] = distanceDecay(dmg, armorDmg, dis, s.weapon.decays, ranges)
-  const shotsToKill = calcBulletsToKills(decayedDmg, decayedArmorDmg, armorHp.value, armorRatio[s.bulletLevel][targetArmor.value], dmgReduction, 100)
+  const bullet = createBulletInstance("Normal", s.bulletLevel, s.weapon)
+  const shotsToKill = calcBulletsToKills(decayedDmg * bullet.damageRatio, decayedArmorDmg, armorHp.value, bullet.armorDamageRatio[targetArmor.value], dmgReduction, 100)
   return (60 / fireSpeed) * (shotsToKill - 1) * 1000
 }
 
