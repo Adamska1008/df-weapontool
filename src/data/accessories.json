@@ -286,5 +286,41 @@
     "damage": 2,
     "armorDamage": 2,
     "fireSpeed": 0
+  },
+  {
+    "id": 33,
+    "name": "AUG晨零一体消音管",
+    "type": "barrel",
+    "distance": 0.18,
+    "damage": 0,
+    "armorDamage": 0,
+    "fireSpeed": 0
+  },
+  {
+    "id": 34,
+    "name": "AUG精英脚架长枪管",
+    "type": "barrel",
+    "distance": 0.30,
+    "damage": 0,
+    "armorDamage": 0,
+    "fireSpeed": 0
+  },
+  {
+    "id": 35,
+    "name": "AUG实用集成三倍镜枪管",
+    "type": "barrel",
+    "distance": 0.06,
+    "damage": 0,
+    "armorDamage": 0,
+    "fireSpeed": 0
+  },
+  {
+    "id": 36,
+    "name": "SR-3M铸钢战术枪管",
+    "type": "barrel",
+    "distance": 0.18,
+    "damage": 0,
+    "armorDamage": 0,
+    "fireSpeed": 0
   }
 ]

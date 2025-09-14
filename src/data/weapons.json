@@ -177,8 +177,22 @@
     "armorDamage": 35,
     "ranges": [55, 90, 2139062143],
     "decays": [1, 0.9, 0.8],
-    "availableAccessories": [4, 5, 6],
+    "availableAccessories": [4, 5, 6, 33, 34, 35],
     "meatAmmoAllowed": false,
     "bulletLevels": [1, 2, 3, 4, 5]
+  },
+  {
+    "id": "14",
+    "name": "SR-3M紧凑突击步枪",
+    "type": "submachineGun",
+    "velocity": 330,
+    "fireSpeed": 747,
+    "damage": 36,
+    "armorDamage": 48,
+    "ranges": [15, 30, 2139062143],
+    "decays": [1, 0.75, 0.65],
+    "availableAccessories": [4, 5, 6, 36],
+    "meatAmmoAllowed": false,
+    "bulletLevels": [3, 4, 5]
   }
 ]

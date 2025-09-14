@@ -126,7 +126,7 @@ const addWeapon = () => {
   if (weapon == undefined) {
     return // should not execute 
   }
-  const setting: WeaponSetting = { id: uuidv4(), weapon: weapon, bulletLevel: 1, barrel: null, gasComp: null, muzzle: null }
+  const setting: WeaponSetting = { id: uuidv4(), weapon: weapon, bulletLevel: weapon.bulletLevels[0], barrel: null, gasComp: null, muzzle: null }
 
   selectedWeapons.value.push(setting)
 }
